@@ -1,56 +1,94 @@
 import sys
-import random
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import  QtCore, QtWidgets, QtGui
 
-
-class TTCWidget(QtWidgets.QWidget):
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         
         self.setWindowTitle("Tic Tac Toe")
+        self.player_turn = QtWidgets.QLabel(f"Player turn: {player_turn}", self)
+        self.turn_count = QtWidgets.QLabel(f"Turn count: {turn_count}", self)
+        
+        self.player_turn.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
+        self.turn_count.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
+        
+        
+        self.player_turn.setGeometry(0, 0, 100, 100)
+        self.turn_count.setGeometry(0, 25, 100, 100)
+        
+        widget = TTCWidget(self)
+        
+        self.setCentralWidget(widget)
+        
+        
+
+class TTCWidget(QtWidgets.QWidget):
+    def __init__(self, parent):
+        
+        super().__init__(parent)
+            
+                
         layout = QtWidgets.QGridLayout(self)
-        
-        self.player_turn = QtWidgets.QLabel(f"Player turn: {player_turn}")
-        self.turn_count = QtWidgets.QLabel(f"Turn count: {turn_count}")
-        
         
         
         self.upper_left = QtWidgets.QPushButton("")
+        layout.addWidget(self.upper_left, 0, 0)
+        self.upper_left.clicked.connect(lambda: self.play_trigger(0, 0))
+
+        
         self.upper_middle = QtWidgets.QPushButton("")
+        layout.addWidget(self.upper_middle, 0, 1)
+        self.upper_middle.clicked.connect(lambda: self.play_trigger(0, 1))
+        
+        
         self.upper_right = QtWidgets.QPushButton("")
+        layout.addWidget(self.upper_right, 0, 2)
+        self.upper_right.clicked.connect(lambda: self.play_trigger(0, 2))
+        
+        
+    
         
         self.center_left = QtWidgets.QPushButton("")
+        layout.addWidget(self.center_left, 1, 0)
+        self.center_left.clicked.connect(lambda: self.play_trigger(1, 0))
+        
         self.center_middle = QtWidgets.QPushButton("")
+        layout.addWidget(self.center_middle, 1, 1)
+        self.center_middle.clicked.connect(lambda: self.play_trigger(1, 1))
+        
         self.center_right = QtWidgets.QPushButton("")
+        layout.addWidget(self.center_right, 1, 2)
+        self.center_right.clicked.connect(lambda: self.play_trigger(1, 2))
+        
+        
+        
         
         self.bottom_left = QtWidgets.QPushButton("")
-        self.bottom_middle = QtWidgets.QPushButton("")
-        self.bottom_right = QtWidgets.QPushButton("")
-        
-        layout.addWidget(self.player_turn)
-        layout.addWidget(self.turn_count)
-        
-        layout.addWidget(self.upper_left, 0, 0)
-        layout.addWidget(self.upper_middle, 0, 1)
-        layout.addWidget(self.upper_right, 0, 2)
-        
-        layout.addWidget(self.center_left, 1, 0)
-        layout.addWidget(self.center_middle, 1, 1)
-        layout.addWidget(self.center_right, 1, 2)
-        
         layout.addWidget(self.bottom_left, 2, 0)
-        layout.addWidget(self.bottom_middle, 2, 1)
-        layout.addWidget(self.bottom_right, 2, 2)
+        self.bottom_left.clicked.connect(lambda: self.play_trigger(2, 0))
         
-
-
+        self.bottom_middle = QtWidgets.QPushButton("")
+        layout.addWidget(self.bottom_middle, 2, 1)
+        self.bottom_middle.clicked.connect(lambda: self.play_trigger(2, 1))
+        
+        self.bottom_right = QtWidgets.QPushButton("")
+        layout.addWidget(self.bottom_right, 2, 2)
+        self.bottom_right.clicked.connect(lambda: self.play_trigger(2, 2))
+        
+    def play_trigger(self, row, col):
+            if board[row][col] != "X" and board[row][col] != "O":
+                board[row][col] = player_turn
+                if check_win() == True:
+                    print(f"{player_turn} player wins at turn {turn_count}")
+            display_board(board)
+        
+    
 
 """
 BASE Tic-Tac-Toe-Game [stops after check_win() == True or turn_count == 9]
 """
-
 player_turn = "X"
-turn_count = 0
+turn_count = 1
 
 
 X_player_win = 0
@@ -161,7 +199,6 @@ def test_function():
     return "Test failed!"
 
 
-
 def play_game():
     global board
     global X_player_win
@@ -188,7 +225,7 @@ def play_game():
     
 app = QtWidgets.QApplication([])
 
-widget = TTCWidget()
+widget = MainWindow()
 widget.resize(800, 600)
 widget.show()
 
